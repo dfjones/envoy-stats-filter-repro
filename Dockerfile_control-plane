@@ -1,0 +1,15 @@
+FROM golang:1.12
+
+COPY ./control-plane/Makefile ./
+COPY ./control-plane/main.go ./
+COPY ./control-plane/cache_resources.go ./
+COPY ./control-plane/go.mod ./
+COPY ./control-plane/go.sum ./
+
+ENV GOPATH=""
+
+RUN make build
+
+EXPOSE 8080 
+
+CMD [ "./control-plane" ]

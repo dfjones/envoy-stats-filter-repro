@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  control-plane:
+    build: 
+      context: .
+      dockerfile: Dockerfile_control-plane
+    ports:
+      - "9090:9090"
+      - "10000:10000"
+    networks:
+      envoy:
+        aliases:
+          - control-plane
+
+  dummy-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile_dummy-service
+    ports:
+      - "8080:8080"
+    networks:
+      envoy:
+        aliases:
+          - dummy-service
+
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.8.0
+    volumes:
+      - ./envoy-config.yaml:/etc/envoy-config.yaml
+    command:
+      - envoy
+      - --config-path
+      - /etc/envoy-config.yaml
+      - --v2-config-only
+      - --service-node
+      - envoy_1
+      - --service-cluster
+      - dev
+      - -l debug
+    expose:
+      - "9002"
+      - "9901"
+    ports:
+      - "9002:9002"
+      - "9901:9901"
+    logging:
+      options:
+        max-size: "50M"
+        max-file: "1"
+    networks:
+      envoy:
+        aliases:
+          - envoy
+    depends_on:
+      - control-plane
+
+networks:
+  envoy: {}
