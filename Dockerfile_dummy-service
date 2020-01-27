@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.13
 
 COPY ./dummy-service/Makefile ./
 COPY ./dummy-service/main.go ./
@@ -8,6 +8,6 @@ ENV GOPATH=""
 
 RUN make build
 
-EXPOSE 8080 
+EXPOSE 8080
 
 CMD [ "./dummy-service" ]

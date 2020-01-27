@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"net/http"
+	"strconv"
+	"sync/atomic"
+	"time"
 
 	v2 "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
@@ -24,7 +26,7 @@ const (
 var (
 	logger          *zap.Logger
 	snapshotCache   cache.SnapshotCache
-	snapshotVersion = 1
+	snapshotVersion =  uint64(1)
 )
 
 func init() {
@@ -39,6 +41,8 @@ func init() {
 
 func main() {
 	logger.Info("starting control-plane")
+
+	time.Sleep(15*time.Second)
 
 	// Create the initial snapshot
 	err := updateSnapShot()
@@ -61,6 +65,19 @@ func main() {
 	m := http.NewServeMux()
 	m.HandleFunc("/update", handleUpdate)
 
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		for {
+			<- ticker.C
+			err := updateSnapShot()
+			if err != nil {
+				logger.Error("Error while updating snapshot", zap.Error(err))
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+
 	// Start the http and grpc server
 	go func() {
 		logger.Fatal("grpc server returned error", zap.Error(grpcServer.Serve(lis)))
@@ -81,15 +98,16 @@ func handleUpdate(rw http.ResponseWriter, req *http.Request) {
 }
 
 func updateSnapShot() error {
+	nextVersion := atomic.AddUint64(&snapshotVersion, 1)
+	nextVersionStr := strconv.FormatUint(nextVersion, 10)
 	adsSnapshot := cache.NewSnapshot(
-		fmt.Sprintf("%d", snapshotVersion),
+		nextVersionStr,
 		endpoints(),
 		clusters(),
 		routes(),
 		listeners())
-	snapshotVersion++
 
-	logger.Info("snapshot updated", zap.Int("version", snapshotVersion))
+	logger.Info("snapshot updated", zap.Uint64("version", nextVersion))
 	err := snapshotCache.SetSnapshot(nodeId, adsSnapshot)
 	if err != nil {
 		return err
