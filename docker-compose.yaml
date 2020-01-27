@@ -2,7 +2,7 @@ version: '3'
 
 services:
   control-plane:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile_control-plane
     ports:
@@ -14,7 +14,7 @@ services:
           - control-plane
 
   dummy-service:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile_dummy-service
     ports:
@@ -25,7 +25,7 @@ services:
           - dummy-service
 
   envoy:
-    image: envoyproxy/envoy-alpine:v1.8.0
+    image: envoyproxy/envoy-alpine:v1.12.2
     volumes:
       - ./envoy-config.yaml:/etc/envoy-config.yaml
     command:

@@ -47,7 +47,7 @@ func main() {
 	}
 
 	// Create an ADS server on port 10000
-	adsSvr := server.NewServer(snapshotCache, Callback{})
+	adsSvr := server.NewServer(snapshotCache, nil)
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(grpc_zap.StreamServerInterceptor(logger))),
 	)

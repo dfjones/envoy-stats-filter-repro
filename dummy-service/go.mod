@@ -1,3 +1,3 @@
-module github.com/billybanfield/envoy-5555-repro/dummy-service
+module github.com/dfjones/envoy-stats-filter-repro/dummy-service
 
-go 1.12
+go 1.13

@@ -17,12 +17,12 @@ const (
 )
 
 func endpoints() []cache.Resource {
-	lbEndpoints := []endpoint.LbEndpoint{lbEndpointFromPort(8080)}
+	lbEndpoints := []*endpoint.LbEndpoint{lbEndpointFromPort(8080)}
 
 	clusterLoadAssignment := &v2.ClusterLoadAssignment{
 		ClusterName: clusterName,
-		Endpoints: []endpoint.LocalityLbEndpoints{
-			endpoint.LocalityLbEndpoints{
+		Endpoints: []*endpoint.LocalityLbEndpoints{
+			&endpoint.LocalityLbEndpoints{
 				Locality: &core.Locality{
 					Region: "test-locality",
 				},
@@ -38,15 +38,17 @@ func endpoints() []cache.Resource {
 	return []cache.Resource{clusterLoadAssignment}
 }
 
-func lbEndpointFromPort(port int) endpoint.LbEndpoint {
-	return endpoint.LbEndpoint{
-		Endpoint: &endpoint.Endpoint{
-			Address: &core.Address{
-				Address: &core.Address_SocketAddress{
-					SocketAddress: &core.SocketAddress{
-						Address: "0.0.0.0",
-						PortSpecifier: &core.SocketAddress_PortValue{
-							PortValue: uint32(port),
+func lbEndpointFromPort(port int) *endpoint.LbEndpoint {
+	return &endpoint.LbEndpoint{
+		HostIdentifier: &endpoint.LbEndpoint_Endpoint{
+			Endpoint: &endpoint.Endpoint{
+				Address: &core.Address{
+					Address: &core.Address_SocketAddress{
+						SocketAddress: &core.SocketAddress{
+							Address: "0.0.0.0",
+							PortSpecifier: &core.SocketAddress_PortValue{
+								PortValue: uint32(port),
+							},
 						},
 					},
 				},
@@ -57,11 +59,14 @@ func lbEndpointFromPort(port int) endpoint.LbEndpoint {
 }
 
 func clusters() []cache.Resource {
+	ct := time.Duration(1) * time.Second
 	return []cache.Resource{
 		&v2.Cluster{
 			Name:           clusterName,
-			Type:           v2.Cluster_EDS,
-			ConnectTimeout: time.Duration(1) * time.Second,
+			ClusterDiscoveryType: &v2.Cluster_Type{
+				Type: v2.Cluster_EDS,
+			},
+			ConnectTimeout: &ct,
 			EdsClusterConfig: &v2.Cluster_EdsClusterConfig{
 				EdsConfig: &core.ConfigSource{
 					ConfigSourceSpecifier: &core.ConfigSource_Ads{
@@ -74,8 +79,8 @@ func clusters() []cache.Resource {
 }
 
 func routes() []cache.Resource {
-	routeEntry := route.Route{
-		Match: route.RouteMatch{
+	routeEntry := &route.Route{
+		Match: &route.RouteMatch{
 			PathSpecifier: &route.RouteMatch_Prefix{
 				Prefix: "/",
 			},
@@ -91,11 +96,11 @@ func routes() []cache.Resource {
 
 	routeConfig := &v2.RouteConfiguration{
 		Name: "egress_route",
-		VirtualHosts: []route.VirtualHost{
-			route.VirtualHost{
+		VirtualHosts: []*route.VirtualHost{
+			&route.VirtualHost{
 				Name:    "test_virtual_host",
 				Domains: []string{"*"},
-				Routes:  []route.Route{routeEntry},
+				Routes:  []*route.Route{routeEntry},
 			},
 		},
 	}
