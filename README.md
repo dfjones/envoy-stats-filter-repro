@@ -10,7 +10,8 @@ If an ADS control-plane connection is used and CDS fails, if a new Cluster is ad
 ### Variations
 
 * `master` branch: Envoy v1.12.2 and go-control-plane v0.8.6
-* ``
+* `latest-control-plane` branch: Envoy v1.12.2 and go-control-plane v0.9.2
+* `envoy-1.13.0` branch: Envoy v1.13.0 and go-control-plane v0.9.2
 
 ### Running
 Start with `docker-compose up -d --build && docker-compose logs -f control-plane`
