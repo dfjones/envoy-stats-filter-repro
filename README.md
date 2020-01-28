@@ -1,6 +1,7 @@
 ## Envoy xDS deadlock repro
 
-This repository contains a small reproduction of an Envoy issue where Envoy fails to subscribe to CDS updates from the control-plane.
+This repository contains a small reproduction of an Envoy issue where Envoy fails to subscribe to CDS updates from the control-plane when a `stats_matcher` `inclusion_list` is active.
+See [envoy-config.yaml](https://github.com/dfjones/envoy-stats-filter-repro/blob/master/envoy-config.yaml#L14).
 
 Here, the control-plane is based off of [envoyproxy/go-control-plane](https://github.com/envoyproxy/go-control-plane).
 
