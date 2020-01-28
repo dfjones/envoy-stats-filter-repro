@@ -42,6 +42,7 @@ func init() {
 func main() {
 	logger.Info("starting control-plane")
 
+	// This wait seems necessary to trigger envoy attempting to connect before the control-plane is ready
 	time.Sleep(15*time.Second)
 
 	// Create the initial snapshot
@@ -103,7 +104,7 @@ func updateSnapShot() error {
 	adsSnapshot := cache.NewSnapshot(
 		nextVersionStr,
 		endpoints(),
-		clusters(),
+		clusters(int(nextVersion)),
 		routes(),
 		listeners())
 

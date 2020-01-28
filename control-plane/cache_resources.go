@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -58,24 +59,30 @@ func lbEndpointFromPort(port int) *endpoint.LbEndpoint {
 	}
 }
 
-func clusters() []cache.Resource {
+func clusters(n int) []cache.Resource {
 	ct := time.Duration(1) * time.Second
-	return []cache.Resource{
-		&v2.Cluster{
-			Name:           clusterName,
-			ClusterDiscoveryType: &v2.Cluster_Type{
-				Type: v2.Cluster_EDS,
-			},
-			ConnectTimeout: &ct,
-			EdsClusterConfig: &v2.Cluster_EdsClusterConfig{
-				EdsConfig: &core.ConfigSource{
-					ConfigSourceSpecifier: &core.ConfigSource_Ads{
-						Ads: &core.AggregatedConfigSource{},
+	var clusters []cache.Resource
+
+	for i := 0; i < n; i++ {
+		clusters = append(clusters,
+			&v2.Cluster{
+				Name: fmt.Sprintf("%s-%d", clusterName, i),
+				ClusterDiscoveryType: &v2.Cluster_Type{
+					Type: v2.Cluster_EDS,
+				},
+				ConnectTimeout: &ct,
+				EdsClusterConfig: &v2.Cluster_EdsClusterConfig{
+					EdsConfig: &core.ConfigSource{
+						ConfigSourceSpecifier: &core.ConfigSource_Ads{
+							Ads: &core.AggregatedConfigSource{},
+						},
 					},
 				},
 			},
-		},
+		)
 	}
+
+	return clusters
 }
 
 func routes() []cache.Resource {
