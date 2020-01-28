@@ -25,7 +25,7 @@ services:
           - dummy-service
 
   envoy:
-    image: envoyproxy/envoy-alpine:v1.11.1
+    image: envoyproxy/envoy-alpine:v1.12.2
     volumes:
       - ./envoy-config.yaml:/etc/envoy-config.yaml
     command:
