@@ -14,7 +14,7 @@ services:
           - control-plane
 
   envoy:
-    image: envoyproxy/envoy-alpine:v1.12.2
+    image: envoyproxy/envoy-alpine:v1.13.0
     volumes:
       - ./envoy-config.yaml:/etc/envoy-config.yaml
     command:
