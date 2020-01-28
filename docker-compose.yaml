@@ -13,17 +13,6 @@ services:
         aliases:
           - control-plane
 
-  dummy-service:
-    build:
-      context: .
-      dockerfile: Dockerfile_dummy-service
-    ports:
-      - "8080:8080"
-    networks:
-      envoy:
-        aliases:
-          - dummy-service
-
   envoy:
     image: envoyproxy/envoy-alpine:v1.12.2
     volumes:
