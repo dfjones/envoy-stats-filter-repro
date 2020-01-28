@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// Create an ADS server on port 10000
-	adsSvr := server.NewServer(snapshotCache, nil)
+	adsSvr := server.NewServer(context.Background(), snapshotCache, nil)
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(grpc_zap.StreamServerInterceptor(logger))),
 	)
@@ -106,7 +106,8 @@ func updateSnapShot() error {
 		endpoints(int(nextVersion)),
 		clusters(int(nextVersion)),
 		routes(),
-		listeners())
+		listeners(),
+		nil)
 
 	logger.Info("snapshot updated", zap.Uint64("version", nextVersion))
 	err := snapshotCache.SetSnapshot(nodeId, adsSnapshot)
@@ -118,7 +119,7 @@ func updateSnapShot() error {
 
 type nodeHasher struct{}
 
-func (nodeHasher) ID(node *core.Node) string {
+func (nodeHasher) ID(node *envoy_api_v2_core.Node) string {
 	return nodeId
 }
 

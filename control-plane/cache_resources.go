@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"time"
-
 	v2 "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/core"
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/endpoint"
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
 	"github.com/envoyproxy/go-control-plane/pkg/cache"
-	protobuf_types "github.com/gogo/protobuf/types"
+	"github.com/golang/protobuf/ptypes/duration"
+	"github.com/golang/protobuf/ptypes/wrappers"
+	"math"
+	"time"
 )
 
 const (
@@ -18,22 +18,22 @@ const (
 )
 
 func endpoints(n int) []cache.Resource {
-	lbEndpoints := []*endpoint.LbEndpoint{lbEndpointFromPort(8080)}
+	lbEndpoints := []*envoy_api_v2_endpoint.LbEndpoint{lbEndpointFromPort(8080)}
 
 	var clas []cache.Resource
 	for i := 0; i < n; i++ {
 		clusterLoadAssignment := &v2.ClusterLoadAssignment{
-			ClusterName: fmt.Sprintf("%s-%d", clusterName, i),
-			Endpoints: []*endpoint.LocalityLbEndpoints{
-				&endpoint.LocalityLbEndpoints{
-					Locality: &core.Locality{
+			ClusterName: clusterName,
+			Endpoints: []*envoy_api_v2_endpoint.LocalityLbEndpoints{
+				{
+					Locality: &envoy_api_v2_core.Locality{
 						Region: "test-locality",
 					},
 					LbEndpoints: lbEndpoints,
 				},
 			},
 			Policy: &v2.ClusterLoadAssignment_Policy{
-				OverprovisioningFactor: &protobuf_types.UInt32Value{
+				OverprovisioningFactor: &wrappers.UInt32Value{
 					Value: math.MaxUint32,
 				},
 			},
@@ -43,15 +43,15 @@ func endpoints(n int) []cache.Resource {
 	return clas
 }
 
-func lbEndpointFromPort(port int) *endpoint.LbEndpoint {
-	return &endpoint.LbEndpoint{
-		HostIdentifier: &endpoint.LbEndpoint_Endpoint{
-			Endpoint: &endpoint.Endpoint{
-				Address: &core.Address{
-					Address: &core.Address_SocketAddress{
-						SocketAddress: &core.SocketAddress{
+func lbEndpointFromPort(port int) *envoy_api_v2_endpoint.LbEndpoint {
+	return &envoy_api_v2_endpoint.LbEndpoint{
+		HostIdentifier: &envoy_api_v2_endpoint.LbEndpoint_Endpoint{
+			Endpoint: &envoy_api_v2_endpoint.Endpoint{
+				Address: &envoy_api_v2_core.Address{
+					Address: &envoy_api_v2_core.Address_SocketAddress{
+						SocketAddress: &envoy_api_v2_core.SocketAddress{
 							Address: "0.0.0.0",
-							PortSpecifier: &core.SocketAddress_PortValue{
+							PortSpecifier: &envoy_api_v2_core.SocketAddress_PortValue{
 								PortValue: uint32(port),
 							},
 						},
@@ -59,12 +59,15 @@ func lbEndpointFromPort(port int) *endpoint.LbEndpoint {
 				},
 			},
 		},
-		HealthStatus: core.HealthStatus_HEALTHY,
+		HealthStatus: envoy_api_v2_core.HealthStatus_HEALTHY,
 	}
 }
 
 func clusters(n int) []cache.Resource {
-	ct := time.Duration(1) * time.Second
+	ctPb := duration.Duration{
+		Seconds:              int64((time.Duration(1) * time.Second).Seconds()),
+		Nanos:                0,
+	}
 	var clusters []cache.Resource
 
 	for i := 0; i < n; i++ {
@@ -74,11 +77,11 @@ func clusters(n int) []cache.Resource {
 				ClusterDiscoveryType: &v2.Cluster_Type{
 					Type: v2.Cluster_EDS,
 				},
-				ConnectTimeout: &ct,
+				ConnectTimeout: &ctPb,
 				EdsClusterConfig: &v2.Cluster_EdsClusterConfig{
-					EdsConfig: &core.ConfigSource{
-						ConfigSourceSpecifier: &core.ConfigSource_Ads{
-							Ads: &core.AggregatedConfigSource{},
+					EdsConfig: &envoy_api_v2_core.ConfigSource{
+						ConfigSourceSpecifier: &envoy_api_v2_core.ConfigSource_Ads{
+							Ads: &envoy_api_v2_core.AggregatedConfigSource{},
 						},
 					},
 				},
@@ -90,15 +93,15 @@ func clusters(n int) []cache.Resource {
 }
 
 func routes() []cache.Resource {
-	routeEntry := &route.Route{
-		Match: &route.RouteMatch{
-			PathSpecifier: &route.RouteMatch_Prefix{
+	routeEntry := &envoy_api_v2_route.Route{
+		Match: &envoy_api_v2_route.RouteMatch{
+			PathSpecifier: &envoy_api_v2_route.RouteMatch_Prefix{
 				Prefix: "/",
 			},
 		},
-		Action: &route.Route_Route{
-			Route: &route.RouteAction{
-				ClusterSpecifier: &route.RouteAction_ClusterHeader{
+		Action: &envoy_api_v2_route.Route_Route{
+			Route: &envoy_api_v2_route.RouteAction{
+				ClusterSpecifier: &envoy_api_v2_route.RouteAction_ClusterHeader{
 					ClusterHeader: "x-envoy-cluster-name",
 				},
 			},
@@ -107,11 +110,11 @@ func routes() []cache.Resource {
 
 	routeConfig := &v2.RouteConfiguration{
 		Name: "egress_route",
-		VirtualHosts: []*route.VirtualHost{
-			&route.VirtualHost{
+		VirtualHosts: []*envoy_api_v2_route.VirtualHost{
+			&envoy_api_v2_route.VirtualHost{
 				Name:    "test_virtual_host",
 				Domains: []string{"*"},
-				Routes:  []*route.Route{routeEntry},
+				Routes:  []*envoy_api_v2_route.Route{routeEntry},
 			},
 		},
 	}
