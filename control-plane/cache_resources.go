@@ -17,26 +17,30 @@ const (
 	clusterName = "test-cluster"
 )
 
-func endpoints() []cache.Resource {
+func endpoints(n int) []cache.Resource {
 	lbEndpoints := []*endpoint.LbEndpoint{lbEndpointFromPort(8080)}
 
-	clusterLoadAssignment := &v2.ClusterLoadAssignment{
-		ClusterName: clusterName,
-		Endpoints: []*endpoint.LocalityLbEndpoints{
-			&endpoint.LocalityLbEndpoints{
-				Locality: &core.Locality{
-					Region: "test-locality",
+	var clas []cache.Resource
+	for i := 0; i < n; i++ {
+		clusterLoadAssignment := &v2.ClusterLoadAssignment{
+			ClusterName: fmt.Sprintf("%s-%d", clusterName, i),
+			Endpoints: []*endpoint.LocalityLbEndpoints{
+				&endpoint.LocalityLbEndpoints{
+					Locality: &core.Locality{
+						Region: "test-locality",
+					},
+					LbEndpoints: lbEndpoints,
 				},
-				LbEndpoints: lbEndpoints,
 			},
-		},
-		Policy: &v2.ClusterLoadAssignment_Policy{
-			OverprovisioningFactor: &protobuf_types.UInt32Value{
-				Value: math.MaxUint32,
+			Policy: &v2.ClusterLoadAssignment_Policy{
+				OverprovisioningFactor: &protobuf_types.UInt32Value{
+					Value: math.MaxUint32,
+				},
 			},
-		},
+		}
+		clas = append(clas, clusterLoadAssignment)
 	}
-	return []cache.Resource{clusterLoadAssignment}
+	return clas
 }
 
 func lbEndpointFromPort(port int) *endpoint.LbEndpoint {

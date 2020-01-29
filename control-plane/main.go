@@ -103,7 +103,7 @@ func updateSnapShot() error {
 	nextVersionStr := strconv.FormatUint(nextVersion, 10)
 	adsSnapshot := cache.NewSnapshot(
 		nextVersionStr,
-		endpoints(),
+		endpoints(int(nextVersion)),
 		clusters(int(nextVersion)),
 		routes(),
 		listeners())
