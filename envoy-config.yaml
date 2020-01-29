@@ -11,11 +11,11 @@ dynamic_resources:
         cluster_name: xds_cluster
   cds_config: { ads: {}}
 
-stats_config:
-  stats_matcher:
-    inclusion_list:
-      patterns:
-        - regex: "server.*"
+#stats_config:
+#  stats_matcher:
+#    inclusion_list:
+#      patterns:
+#        - regex: "server.*"
 
 
 static_resources:
