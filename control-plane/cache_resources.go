@@ -23,7 +23,7 @@ func endpoints(n int) []cache.Resource {
 	var clas []cache.Resource
 	for i := 0; i < n; i++ {
 		clusterLoadAssignment := &v2.ClusterLoadAssignment{
-			ClusterName: clusterName,
+			ClusterName: fmt.Sprintf("%s-%d", clusterName, i),
 			Endpoints: []*envoy_api_v2_endpoint.LocalityLbEndpoints{
 				{
 					Locality: &envoy_api_v2_core.Locality{
