@@ -15,6 +15,7 @@ stats_config:
   stats_matcher:
     inclusion_list:
       patterns:
+        - regex: "cluster.*version"
         - regex: "server.*"
 
 
