@@ -13,6 +13,7 @@ If an ADS control-plane connection is used and CDS fails, if a new Cluster is ad
 * [`master`](https://github.com/dfjones/envoy-stats-filter-repro/tree/master) branch: Envoy v1.12.2 and go-control-plane v0.8.6
 * [`latest-control-plane`](https://github.com/dfjones/envoy-stats-filter-repro/tree/latest-control-plane) branch: Envoy v1.12.2 and go-control-plane v0.9.2
 * [`envoy-1.13.0`](https://github.com/dfjones/envoy-stats-filter-repro/tree/envoy-1.13.0) branch: Envoy v1.13.0 and go-control-plane v0.9.2
+* [`no-stats-filter`](https://github.com/dfjones/envoy-stats-filter-repro/tree/no-stats-filter) branch: stats inclusion list disabled, Envoy v1.13.0 and go-control-plane v0.9.2
 
 ### Running
 Start with `docker-compose up -d --build && docker-compose logs -f control-plane`
