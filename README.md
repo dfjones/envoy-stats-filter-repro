@@ -25,31 +25,41 @@ This delay is necessary to reproduce the issue.
 Example output:
 
 ```
-control-plane_1  | 2020-01-28T19:30:14.301Z	INFO	go/main.go:43	starting control-plane
-control-plane_1  | 2020-01-28T19:30:29.270Z	INFO	go/main.go:111	snapshot updated	{"version": 2}
-control-plane_1  | 2020-01-28T19:30:29.271Z	INFO	go/main.go:86	grpc server started on port 10000
-control-plane_1  | 2020-01-28T19:30:34.273Z	INFO	go/main.go:111	snapshot updated	{"version": 3}
-control-plane_1  | 2020-01-28T19:30:39.272Z	INFO	go/main.go:111	snapshot updated	{"version": 4}
-control-plane_1  | 2020-01-28T19:30:43.905Z	INFO	cache/simple.go:243	respond type.googleapis.com/envoy.api.v2.Cluster[] version "" with version "4"
-control-plane_1  | 2020-01-28T19:30:43.905Z	INFO	cache/simple.go:243	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "" with version "4"
-control-plane_1  | 2020-01-28T19:30:43.953Z	INFO	cache/simple.go:237	ADS mode: not responding to request: "test-cluster" not listed
-control-plane_1  | 2020-01-28T19:30:43.954Z	INFO	cache/simple.go:196	open watch 1 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "4"
-control-plane_1  | 2020-01-28T19:30:44.272Z	INFO	go/main.go:111	snapshot updated	{"version": 5}
-control-plane_1  | 2020-01-28T19:30:44.273Z	INFO	cache/simple.go:114	respond open watch 1[egress_route] with new version "5"
-control-plane_1  | 2020-01-28T19:30:44.273Z	INFO	cache/simple.go:243	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "4" with version "5"
-control-plane_1  | 2020-01-28T19:30:44.276Z	INFO	cache/simple.go:196	open watch 2 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "5"
-control-plane_1  | 2020-01-28T19:30:49.237Z	INFO	go/main.go:111	snapshot updated	{"version": 6}
-control-plane_1  | 2020-01-28T19:30:49.237Z	INFO	cache/simple.go:114	respond open watch 2[egress_route] with new version "6"
-control-plane_1  | 2020-01-28T19:30:49.237Z	INFO	cache/simple.go:243	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "5" with version "6"
-control-plane_1  | 2020-01-28T19:30:49.239Z	INFO	cache/simple.go:196	open watch 3 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "6"
+control-plane_1  | 2020-01-29T22:37:33.417Z	INFO	go/main.go:43	starting control-plane
+control-plane_1  | 2020-01-29T22:37:48.420Z	INFO	go/main.go:112	snapshot updated	{"version": 2}
+control-plane_1  | 2020-01-29T22:37:48.420Z	INFO	go/main.go:86	grpc server started on port 10000
+control-plane_1  | 2020-01-29T22:37:52.157Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.Cluster[] version "" with version "2"
+control-plane_1  | 2020-01-29T22:37:52.157Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "" with version "2"
+control-plane_1  | 2020-01-29T22:37:52.160Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.ClusterLoadAssignment[test-cluster-1 test-cluster-0] version "" with version "2"
+control-plane_1  | 2020-01-29T22:37:52.165Z	DEBUG	cache/simple.go:195	open watch 1 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "2"
+control-plane_1  | 2020-01-29T22:37:52.166Z	DEBUG	cache/simple.go:195	open watch 2 for type.googleapis.com/envoy.api.v2.ClusterLoadAssignment[test-cluster-1 test-cluster-0] from nodeID "test-node", version "2"
+control-plane_1  | 2020-01-29T22:37:53.421Z	INFO	go/main.go:112	snapshot updated	{"version": 3}
+control-plane_1  | 2020-01-29T22:37:53.421Z	DEBUG	cache/simple.go:113	respond open watch 1[egress_route] with new version "3"
+control-plane_1  | 2020-01-29T22:37:53.422Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "2" with version "3"
+control-plane_1  | 2020-01-29T22:37:53.422Z	DEBUG	cache/simple.go:113	respond open watch 2[test-cluster-1 test-cluster-0] with new version "3"
+control-plane_1  | 2020-01-29T22:37:53.422Z	DEBUG	cache/simple.go:236	ADS mode: not responding to request: "test-cluster-2" not listed
+control-plane_1  | 2020-01-29T22:37:53.424Z	DEBUG	cache/simple.go:195	open watch 3 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "3"
+control-plane_1  | 2020-01-29T22:37:58.421Z	INFO	go/main.go:112	snapshot updated	{"version": 4}
+control-plane_1  | 2020-01-29T22:37:58.421Z	DEBUG	cache/simple.go:113	respond open watch 3[egress_route] with new version "4"
+control-plane_1  | 2020-01-29T22:37:58.421Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "3" with version "4"
+control-plane_1  | 2020-01-29T22:37:58.423Z	DEBUG	cache/simple.go:195	open watch 4 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "4"
+control-plane_1  | 2020-01-29T22:38:03.425Z	INFO	go/main.go:112	snapshot updated	{"version": 5}
+control-plane_1  | 2020-01-29T22:38:03.425Z	DEBUG	cache/simple.go:113	respond open watch 4[egress_route] with new version "5"
+control-plane_1  | 2020-01-29T22:38:03.425Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "4" with version "5"
+control-plane_1  | 2020-01-29T22:38:03.427Z	DEBUG	cache/simple.go:195	open watch 5 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "5"
+control-plane_1  | 2020-01-29T22:38:08.422Z	INFO	go/main.go:112	snapshot updated	{"version": 6}
+control-plane_1  | 2020-01-29T22:38:08.422Z	DEBUG	cache/simple.go:113	respond open watch 5[egress_route] with new version "6"
+control-plane_1  | 2020-01-29T22:38:08.422Z	DEBUG	cache/simple.go:242	respond type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] version "5" with version "6"
+control-plane_1  | 2020-01-29T22:38:08.424Z	DEBUG	cache/simple.go:195	open watch 6 for type.googleapis.com/envoy.api.v2.RouteConfiguration[egress_route] from nodeID "test-node", version "6"
 ```
 
-Here we see that Envoy eventually connects and receives CDS and RDS responses at version 4.
+Here we see that Envoy eventually connects and receives CDS and RDS responses at version 2.
 
-No EDS response is sent because there is not yet consistency between Envoy and the control-plane on the list of Clusters.
+Initial EDS responses are sent until there is an inconsistency between Envoy and the control-plane on the list of Clusters:
+`control-plane_1  | 2020-01-29T22:37:53.422Z	DEBUG	cache/simple.go:236	ADS mode: not responding to request: "test-cluster-2" not listed`
 See [go-control-plane/issues/119](https://github.com/envoyproxy/go-control-plane/issues/119) for background on this behavior.
 
-In these logs we can see that no watch is created for `envoy.api.v2.Cluster[]` (CDS) after the initial update at version 4. 
+In these logs we can see that no watch is created for `envoy.api.v2.Cluster[]` (CDS) after the initial update at version 2. 
 While I have not determined the exact failure here, a likely reason is that Envoy has responded with an incorrect xDS version or nonce causing the control-plane to, correctly, ignore the message.
 
 The xDS protocol will then continue in this state with no further CDS or EDS updates being sent to Envoy.
