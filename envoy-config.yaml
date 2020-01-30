@@ -13,10 +13,9 @@ dynamic_resources:
 
 stats_config:
   stats_matcher:
-    inclusion_list:
+    exclusion_list:
       patterns:
-        - regex: "cluster.*version"
-        - regex: "server.*"
+        - suffix: "warming_clusters"
 
 
 static_resources:
